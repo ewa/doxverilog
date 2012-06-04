@@ -39,7 +39,7 @@
 #include "vhdldocgen.h"
 #include "layout.h"
 #include "arguments.h"
-
+#include "verilogdocgen.h"
 //-----------------------------------------------------------------------------
 
 //static inline MemberList *createNewMemberList(MemberList::ListType lt)
@@ -302,7 +302,7 @@ QCString ClassDef::displayName() const
   SrcLangExt lang = getLanguage();
   //static bool vhdlOpt = Config_getBool("OPTIMIZE_OUTPUT_VHDL");
   QCString n;
-  if (lang==SrcLangExt_VHDL)
+  if (lang==SrcLangExt_VHDL || lang==SrcLangExt_VERILOG)
   {
     n = VhdlDocGen::getClassName(this);
   }
@@ -391,9 +391,26 @@ void ClassDef::internalInsertMember(MemberDef *md,
                                    )
 {
   //printf("insertInternalMember(%s) isHidden()=%d\n",md->name().data(),md->isHidden());
-  if (md->isHidden()) return;
+ 
+  static bool optVerilog    = Config_getBool("OPTIMIZE_OUTPUT_VHDL");
+	
+if (md->isHidden()) return;
 
-  if (getLanguage()==SrcLangExt_VHDL)
+    if(optVerilog)
+	  {
+	  QCString tti=VhdlDocGen::trVhdlType(md->getMemberSpecifiers(),false);
+      //  VhdlDocGen::deleteAllChars(tti,' '); // Always Construct
+  
+        QStringList qsl=this->getList();
+        int i=qsl.findIndex(tti);
+        if(i<0)
+          this->addListType(tti);
+	  }
+
+
+
+
+  if (getLanguage()==SrcLangExt_VHDL || getLanguage()==SrcLangExt_VERILOG )
   {
     QCString title=VhdlDocGen::trVhdlType(md->getMemberSpecifiers(),FALSE);
     if (!m_impl->vhdlSummaryTitles.find(title))
@@ -1450,7 +1467,7 @@ void ClassDef::writeSummaryLinks(OutputList &ol)
   LayoutDocEntry *lde;
   bool first=TRUE;
   
-  if (getLanguage()!=SrcLangExt_VHDL)
+  if (getLanguage()!=SrcLangExt_VHDL  ||  getLanguage()!=SrcLangExt_VERILOG)
   {
     for (eli.toFirst();(lde=eli.current());++eli)
     {
@@ -1699,9 +1716,12 @@ void ClassDef::writeDeclarationLink(OutputList &ol,bool &found,const char *heade
       {
         ol.parseText(header);
       }
-      else if (lang==SrcLangExt_VHDL)
+      else if (lang==SrcLangExt_VHDL ||  lang==SrcLangExt_VERILOG)
       {
-        ol.parseText(VhdlDocGen::trVhdlType(VhdlDocGen::ARCHITECTURE,FALSE));
+	  if(lang==SrcLangExt_VERILOG)
+		 ol.parseText("Modules");
+	  else
+		 ol.parseText(VhdlDocGen::trVhdlType(VhdlDocGen::ARCHITECTURE,FALSE));
       }
       else
       {
@@ -1720,7 +1740,11 @@ void ClassDef::writeDeclarationLink(OutputList &ol,bool &found,const char *heade
         << "\">" << convertToXML(name()) << "</class>" << endl;
     }
     ol.startMemberItem(anchor(),FALSE);
-    QCString ctype = compoundTypeString();
+    QCString ctype;
+	if(lang==SrcLangExt_VERILOG)
+	   ctype=VhdlDocGen::getProtectionName((VhdlDocGen::VhdlClasses)protection());
+	else
+		ctype = compoundTypeString();
     QCString cname;
     if (localNames)
     {
@@ -1755,7 +1779,7 @@ void ClassDef::writeDeclarationLink(OutputList &ol,bool &found,const char *heade
       ol.docify(cname);
       ol.endBold();
     }
-    if (lang==SrcLangExt_VHDL) // now write the type
+    if (lang==SrcLangExt_VHDL || lang==SrcLangExt_VHDL) // now write the type
     {
       ol.writeString(" ");
       ol.insertMemberAlign();
@@ -2240,7 +2264,7 @@ void ClassDef::writeMemberList(OutputList &ol)
         {
           ol.writeString("<span class=\"mlabel\">");
           QStrList sl;
-          if (lang==SrcLangExt_VHDL) 
+          if (lang==SrcLangExt_VHDL || lang==SrcLangExt_VERILOG) 
           {
             sl.append(VhdlDocGen::trVhdlType(md->getMemberSpecifiers())); //append vhdl type
           }
@@ -2251,7 +2275,8 @@ void ClassDef::writeMemberList(OutputList &ol)
             if (Config_getBool("INLINE_INFO") && md->isInline())        
                                        sl.append("inline");
             if (md->isExplicit())      sl.append("explicit");
-            if (md->isMutable())       sl.append("mutable");
+            if (md->isMutable())    
+				sl.append("mutable");
             if (prot==Protected)       sl.append("protected");
             else if (prot==Private)    sl.append("private");
             else if (prot==Package)    sl.append("package");
@@ -3986,7 +4011,7 @@ void ClassDef::writeMemberDeclarations(OutputList &ol,MemberList::ListType lt,co
   if (ml) 
   {
     //printf("%s: ClassDef::writeMemberDeclarations for %s\n",name().data(),ml->listTypeAsString().data());
-    if (getLanguage()==SrcLangExt_VHDL) // use specific declarations function
+    if (getLanguage()==SrcLangExt_VHDL || getLanguage()==SrcLangExt_VERILOG) // use specific declarations function
     {
       VhdlDocGen::writeVhdlDeclarations(ml,ol,0,this,0,0);
     }

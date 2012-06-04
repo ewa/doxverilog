@@ -1330,7 +1330,8 @@ void Config::check()
     filePatternList.append("*.f90");
     filePatternList.append("*.f");
     filePatternList.append("*.for");
-    filePatternList.append("*.vhd");
+    filePatternList.append("*.v");
+	filePatternList.append("*.vhd");
     filePatternList.append("*.vhdl");
     filePatternList.append("*.tcl");
     filePatternList.append("*.md");
@@ -1354,7 +1355,8 @@ void Config::check()
       filePatternList.append("*.PY");
       filePatternList.append("*.F90");
       filePatternList.append("*.F");
-      filePatternList.append("*.VHD");
+      filePatternList.append("*.V");
+	  filePatternList.append("*.VHD");
       filePatternList.append("*.VHDL");
       filePatternList.append("*.TCL");
       filePatternList.append("*.MD");
@@ -1467,6 +1469,15 @@ void Config::check()
     annotationFromBrief.append("the");
   }
 
+  
+  
+// some default settings for verilog
+  if (Config_getBool("OPTIMIZE_OUTPUT_VERILOG"))
+  {
+   Config_getBool("OPTIMIZE_OUTPUT_VHDL")       = TRUE;
+  }
+
+  
   // some default settings for vhdl
   if (Config_getBool("OPTIMIZE_OUTPUT_VHDL") && 
       (Config_getBool("INLINE_INHERITED_MEMB") || 
@@ -1502,8 +1513,13 @@ void Config::check()
     Config_getBool("EXTRACT_PRIVATE")       = TRUE;
     Config_getBool("ENABLE_PREPROCESSING")  = FALSE;
     Config_getBool("EXTRACT_PACKAGE")       = TRUE;
-  }                               
+  }  
 
+  if (Config_getBool("OPTIMIZE_OUTPUT_VERILOG"))
+  {
+   Config_getBool("ENABLE_PREPROCESSING")  = TRUE;
+  }
+  
 }
 
 void Config::init()

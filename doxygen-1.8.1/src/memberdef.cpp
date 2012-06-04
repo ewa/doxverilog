@@ -42,7 +42,7 @@
 #include "vhdlscanner.h"
 #include "vhdldocgen.h"
 #include "arguments.h"
-
+#include "verilogdocgen.h"
 #define START_MARKER 0x4D454D5B // MEM[
 #define END_MARKER   0x4D454D5D // MEM]
 
@@ -760,6 +760,12 @@ bool MemberDef::isReimplementedBy(ClassDef *cd) const
     }
   }
   return FALSE;
+}
+
+
+QCString MemberDef::getDefinition() const
+{ 
+ return m_impl->def; 
 }
 
 void MemberDef::insertEnumField(MemberDef *md)
@@ -1807,7 +1813,7 @@ void MemberDef::_getLabels(QStrList &sl,Definition *container) const
     //ol.startTypewriter();
     //ol.docify(" [");
     SrcLangExt lang = getLanguage();
-    bool optVhdl = lang==SrcLangExt_VHDL;
+    bool optVhdl = (lang==SrcLangExt_VHDL || lang==SrcLangExt_VERILOG); 
     if (optVhdl)
     {
       sl.append(VhdlDocGen::trTypeString(getMemberSpecifiers()));
@@ -2184,7 +2190,8 @@ void MemberDef::writeDocumentation(MemberList *ml,OutputList &ol,
 
   SrcLangExt lang = getLanguage();
   //printf("member=%s lang=%d\n",name().data(),lang);
-  bool optVhdl = lang==SrcLangExt_VHDL;
+   bool optVhdl =( lang==SrcLangExt_VHDL || lang==SrcLangExt_VERILOG);
+
   QCString sep = getLanguageSpecificSeparator(lang,TRUE);
 
   QCString scopeName = scName;
@@ -2393,7 +2400,7 @@ void MemberDef::writeDocumentation(MemberList *ml,OutputList &ol,
 
     if (optVhdl)
     {
-      VhdlDocGen::writeVHDLTypeDocumentation(this,container,ol);
+	    VhdlDocGen::writeVHDLTypeDocumentation(this,container,ol);
     }
     else
     {

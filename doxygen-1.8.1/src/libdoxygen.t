@@ -107,7 +107,15 @@ sub GenerateDep {
 	$(YACC) -l -d -p vhdlScanYY vhdlparser.y -o vhdlparser.c 
 	-rm vhdlparser.c	
 	
-#$ GenerateDep("layout.cpp","layout_default.h");
+
+#$ GenerateDep("verilogscanner.cpp","verilogscanner.l");
+	$(LEX) -d -8  -PverilogScanYY -t verilogscanner.l | $(INCBUFSIZE) >verilogscanner.cpp
+
+#$ GenerateDep("verilogparser.cpp","verilogparser.y");
+	$(YACC)  -v -d verilogparser.y -o verilogparser.cpp 
+
+#$ GenerateDep("preVerilog.cpp","preVerilog.l");
+	$(LEX) -PpreYYVerilog -t preVerilog.l | $(INCBUFSIZE) >preVerilog.cpp 
 
 TO_C_CMD=sed -e "s/\\\\/\\\\\\\\/g" -e "s/\"/\\\\\"/g" -e "s/^/\"/g" -e "s/$$/\\\\n\"/g"
 

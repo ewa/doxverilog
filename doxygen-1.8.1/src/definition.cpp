@@ -196,6 +196,15 @@ static bool matchExcludedSymbols(const char *name)
   return FALSE;
 }
 
+void Definition::addListType(QCString q)
+	{
+      qsl.append(q);
+	}
+
+QStringList& Definition::getList() {return qsl;}
+
+
+
 void Definition::addToMap(const char *name,Definition *d)
 {
   bool vhdlOpt = Config_getBool("OPTIMIZE_OUTPUT_VHDL");
@@ -996,7 +1005,7 @@ void Definition::writeInlineCode(OutputList &ol,const char *scopeName)
       if (definitionType()==TypeMember) thisMd = (MemberDef *)this;
 
       // vhdl  parser can' t start at an arbitrary point in the source code
-      if(this->getLanguage()==SrcLangExt_VHDL)
+      if(this->getLanguage()==SrcLangExt_VHDL || this->getLanguage()==SrcLangExt_VERILOG)
       {
         if (thisMd) VhdlDocGen::writeCodeFragment(ol,actualStart,codeFragment,thisMd);
         return;

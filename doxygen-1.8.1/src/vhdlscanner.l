@@ -103,10 +103,11 @@ static int iCodeLen;
 //static int           g_inputLines=0;      //!<number of line in the code fragment
 //static bool          g_needsTermination;
 static	QMap<QCString, int> keyMap;
-
+static QList<Entry>  lineEntry;
+static bool  checkMultiComment(QCString& qcs,int line);
 static void handleCommentBlock(const QCString &doc,bool brief);
 static void mapLibPackage(const Entry* ce);
-static Entry* getEntryAtLine(const Entry* ce,int line);
+ static QList<Entry>* getEntryAtLine(const Entry* ce,int line);
 static bool addLibUseClause(const QCString &type);
 static Entry* oldEntry;
 static bool varr=FALSE;
@@ -554,18 +555,8 @@ BR                         [ \t\n\r]
     startComment=yyLineNr;
     g_lastCommentContext=YY_START;
   }
-
-  Entry* pTemp=getEntryAtLine(current_root,len);
-  if (pTemp)
-  { // found one line comment, add it to the entry on this line
-    pTemp->briefLine=yyLineNr;
-    pTemp->brief+=vhdlScanYYtext;
-    pTemp->briefFile=yyFileName;
-    pTemp->fileName = yyFileName;
- 	   
-    VhdlDocGen::prepareComment(pTemp->brief);
-  }
-  else 
+  
+   if(!checkMultiComment(qc,len))
   {
     strComment+=vhdlScanYYtext;
   }
@@ -629,24 +620,12 @@ BR                         [ \t\n\r]
 	  }
 
 	  //printf("--> handleCommentBlock line %d\n",yyLineNr);
-	  Entry* pTemp=getEntryAtLine(current_root,yyLineNr);
-
 	  if (!isEndCode && index==-1)
 	  {
 	    int j=qcs.find("--!");
 	    qcs=qcs.right(qcs.length()-3-j);
 
-	    if (pTemp)
-	    {
-	      pTemp->briefLine=yyLineNr;
-	      pTemp->fileName = yyFileName;
- 	      qcs=qcs.stripWhiteSpace();
-	      pTemp->brief+=qcs;
-
-	      pTemp->briefFile=yyFileName;
-	      iDocLine=-1;
-	    }
-	    else
+        if(!checkMultiComment(qcs,yyLineNr))
 	    {
 	      handleCommentBlock(qcs,TRUE);
 	    }
@@ -985,8 +964,9 @@ static void handleCommentBlock(const QCString &doc,bool brief)
   strComment.resize(0);
 }
 
-// returns the vhdl type parsed at line xxx
-static Entry* getEntryAtLine(const Entry* ce,int line)
+// returns the vhdl parsed types at line xxx
+
+QList<Entry>* getEntryAtLine(const Entry* ce,int line)
 {
   EntryListIterator eli(*ce->children());
   Entry *found=0;
@@ -995,15 +975,14 @@ static Entry* getEntryAtLine(const Entry* ce,int line)
   {
     if (rt->bodyLine==line)
     {
-      found=rt;
+		lineEntry.insert(0,rt);
     } // if
-    if (!found) 
-    {
-      found=getEntryAtLine(rt,line);
-    }
+   
+    getEntryAtLine(rt,line);
   }
-  return found;
-}// getEntryAtLine
+return &lineEntry;
+}
+
 
 // token index in vhdlparser.hpp 258..416
 int getParsedLine(int object)
@@ -1022,3 +1001,25 @@ void isVhdlDocPending()
   handleCommentBlock(str_doc.doc,str_doc.brief);
   iDocLine=-1;
 }
+
+static bool  checkMultiComment(QCString& qcs,int line)
+{
+  QList<Entry> *pTemp=getEntryAtLine(current_root,line);
+
+ if (pTemp->isEmpty())  return false;
+  
+    int ii=pTemp->count();
+   qcs.stripPrefix("--!");
+    while(!pTemp->isEmpty()){
+    
+    Entry *e=(Entry*)pTemp->first();
+    e->briefLine=line;
+    e->brief+=qcs;
+    iDocLine=-1;
+    pTemp->removeFirst();
+    ii=pTemp->count();
+    }
+     return true; 
+ }
+ 
+ 

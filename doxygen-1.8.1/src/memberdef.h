@@ -51,7 +51,7 @@ class MemberDef : public Definition
   public:
     
     enum MemberType { 
-      Define,
+      Define=9,
       Function, 
       Variable, 
       Typedef, 
@@ -366,7 +366,8 @@ class MemberDef : public Definition
     void findSectionsInDocumentation();
     
     bool visited;
-   
+   QCString getDefinition() const;
+
   protected:
     void flushToDisk() const;
     void loadFromDisk() const;

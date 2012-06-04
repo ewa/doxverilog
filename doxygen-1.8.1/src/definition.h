@@ -19,6 +19,7 @@
 #define DEFINITION_H
 
 #include "qtbc.h"
+#include "qstringlist.h"
 #include <qlist.h>
 #include <qdict.h>
 #include <sys/types.h>
@@ -332,6 +333,10 @@ class Definition : public DefinitionIntf, public LockableObj
 
     void addSectionsToIndex();
     void writeToc(OutputList &ol);
+void addListType(QCString q);
+    
+
+	QStringList& getList();
 
   protected:
 
@@ -360,6 +365,8 @@ class Definition : public DefinitionIntf, public LockableObj
     bool m_isSymbol;
     QCString m_symbolName;
     int m_defLine;
+    QStringList qsl;
+
 };
 
 class DefinitionList : public QList<Definition>, public DefinitionIntf

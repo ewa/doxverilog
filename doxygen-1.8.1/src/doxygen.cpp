@@ -83,6 +83,8 @@
 #include "filestorage.h"
 #include "markdown.h"
 #include "arguments.h"
+#include "verilogscanner.h"
+#include "preVerilog.h"
 
 #include "layout.h"
 
@@ -8816,8 +8818,16 @@ static void parseFiles(Entry *root,EntryNav *rootNav)
     {
       BufStr inBuf(fi.size()+4096);
       msg("Preprocessing %s...\n",s->data());
+      if(Config_getBool("OPTIMIZE_OUTPUT_VERILOG")) 
+	 {
+	//   readInputFile(fileName,preBuf);
+	   preprocessVerilogFile(fileName,preBuf,0,-1);
+	 }
+	 else 
+	 {
       readInputFile(fileName,inBuf);
       preprocessFile(fileName,inBuf,preBuf);
+     }
     }
     else // no preprocessing
     {
@@ -9359,6 +9369,7 @@ void initDoxygen()
   Doxygen::parserManager->registerParser("dbusxml", new DBusXMLScanner);
   Doxygen::parserManager->registerParser("tcl",     new TclLanguageScanner);
   Doxygen::parserManager->registerParser("md",      new MarkdownFileParser);
+  Doxygen::parserManager->registerParser("v", new VerilogScanner);
 
   // register any additional parsers here...
 
@@ -9366,6 +9377,7 @@ void initDoxygen()
   initClassMemberIndices();
   initNamespaceMemberIndices();
   initFileMemberIndices();
+  initVerilogPreprocessor();
 
   Doxygen::symbolMap     = new QDict<DefinitionIntf>(1000);
   Doxygen::inputNameList = new FileNameList;
@@ -9418,6 +9430,8 @@ void cleanUpDoxygen()
   delete Doxygen::xrefLists;
   delete Doxygen::parserManager;
   cleanUpPreprocessor();
+   cleanUpVerilogPreprocessor();
+
   delete theTranslator;
   delete g_outputList;
   Mappers::freeMappers();
@@ -10530,6 +10544,9 @@ void parseInput()
 
   msg("Adding members to index pages...\n");
   addMembersToIndex();
+
+   if (Config_getBool("OPTIMIZE_OUTPUT_VHDL") && Config_getBool("HAVE_DOT"))
+	   VhdlDocGen::writeOverview();
 }
 
 void generateOutput()
@@ -10694,6 +10711,9 @@ void generateOutput()
     msg("Generating graph info page...\n");
     writeGraphInfo(*g_outputList);
   }
+
+if(Config_getBool("OPTIMIZE_OUTPUT_VHDL") && Config_getBool("HAVE_DOT"))
+  VhdlDocGen::writeOverview(*g_outputList);
 
   msg("Generating directory documentation...\n");
   generateDirDocs(*g_outputList);

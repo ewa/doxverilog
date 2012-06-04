@@ -1245,7 +1245,7 @@ attribute_spec: t_ATTRIBUTE t_Identifier t_OF entity_spec t_IS expr t_Semicolon
                   addVhdlType($2,getParsedLine(t_ATTRIBUTE),Entry::VARIABLE_SEC,VhdlDocGen::ATTRIBUTE,0,oo.data());
                 }
 
-entity_spec : entity_name_list signature  t_Colon entity_class
+entity_spec : entity_name_list signature  t_Colon entity_class { $$=$1+$2+":"+$4;}	
 
 entity_name_list:   designator entity_name_list_1         { $$=$1+" "+$2; }
 entity_name_list:   t_OTHERS                              { $$="others";  }
@@ -1263,7 +1263,7 @@ entity_class: t_LABEL         { $$="label";         }
 entity_class: t_TYPE          { $$="type";          }
 entity_class: t_SUBTYPE       { $$="subtype";       }
 entity_class: t_PROCEDURE     { $$="procedure";     }
-entity_class: t_FUNCTION      { $$="";              }
+entity_class: t_FUNCTION      { $$="function";              }
 entity_class: t_SIGNAL        { $$="signal";        }
 entity_class: t_VARIABLE      { $$="variable";      }
 entity_class: t_CONSTANT      { $$="constant";      }

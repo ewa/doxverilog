@@ -6359,6 +6359,9 @@ g_lang2extMap[] =
   { "fortran",     "fortran", SrcLangExt_Fortran  },
   { "vhdl",        "vhdl",    SrcLangExt_VHDL     },
   { "dbusxml",     "dbusxml", SrcLangExt_XML      },
+    { "ucf",        "v",    SrcLangExt_VERILOG   },
+  { "qsf",        "v",    SrcLangExt_VERILOG   },
+  { "v",        "v",    SrcLangExt_VERILOG    },
   { "tcl",         "tcl",     SrcLangExt_Tcl      },
   { "md",          "md",      SrcLangExt_Markdown },
   { 0,             0,        (SrcLangExt)0        }
@@ -6430,7 +6433,9 @@ void initDefaultExtensionMapping()
   updateLanguageMapping(".qsf",      "vhdl");
   updateLanguageMapping(".md",       "md");
   updateLanguageMapping(".markdown", "md");
-
+  updateLanguageMapping(".ucf",  "v");
+  updateLanguageMapping(".qsf",  "v");
+  updateLanguageMapping(".v",  "v");
   //updateLanguageMapping(".xml",   "dbusxml");
 }
 
@@ -7171,9 +7176,19 @@ void writeColoredImgData(const char *dir,ColoredImgDataItem data[])
     QFile f(fileName);
     if (f.open(IO_WriteOnly))
     {
-      ColoredImage img(data->width,data->height,data->content,data->alpha,
+      
+		if(data->icon==NULL)
+		{
+		ColoredImage img(data->width,data->height,data->content,data->alpha,
                        sat,hue,gamma);
-      img.save(fileName);
+           img.save(fileName);
+		}
+		else
+		{
+			ColoredImage img(data->width,data->height,0,data->alpha,
+				sat,hue,gamma,data->icon);
+			img.save(fileName);
+		}
     }
     else
     {

@@ -54,7 +54,7 @@ class ColoredImage
   public:
     ColoredImage(int width,int height,
            const uchar *greyLevels,const uchar *alphaLevels,
-           int saturation,int hue,int gamma);
+           int saturation,int hue,int gamma,unsigned int* icon=NULL);
    ~ColoredImage();
     bool save(const char *fileName);
     static void hsl2rgb(double h,double s,double l,

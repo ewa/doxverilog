@@ -105,6 +105,7 @@ HEADERS      =	arguments.h \
                 fortrancode.h \
                 fortranscanner.h \
                 dbusxmlscanner.h \
+                preVerilog.h \
 		qhp.h \
 		qhpxmlwriter.h \
 		qtbc.h \
@@ -166,6 +167,9 @@ HEADERS      =	arguments.h \
 		unistd.h \
 		util.h \
 		version.h \
+		verilogscanner.h \
+		verilogdocgen.h \
+		verilogparser.hpp \
 		vhdlcode.h \
 		vhdldocgen.h \
 		vhdlscanner.h \
@@ -237,6 +241,7 @@ SOURCES      =	arguments.cpp \
 		pagedef.cpp \
 		perlmodgen.cpp \
 		pre.cpp \
+		preVerilog.cpp \
 		pycode.cpp \
 		pyscanner.cpp \    
 		qhp.cpp \
@@ -254,6 +259,9 @@ SOURCES      =	arguments.cpp \
 		translator.cpp \
 		util.cpp \
 		version.cpp \
+		verilogscanner.cpp \
+		verilogparser.cpp \
+		verilogdocgen.cpp \
 		vhdlcode.cpp \
 		vhdldocgen.cpp \
 		vhdlparser.cpp \

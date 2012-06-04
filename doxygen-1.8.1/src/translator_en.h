@@ -463,7 +463,9 @@ class TranslatorEnglish : public Translator
      *  documentation blocks for defines
      */
     virtual QCString trDefineDocumentation()
-    { return "Macro Definition Documentation"; }
+    {
+		return "Macro Definition Documentation"; 
+	}
 
     /*! This is used in the documentation of a file/namespace before the list 
      *  of documentation blocks for function prototypes

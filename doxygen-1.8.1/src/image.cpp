@@ -491,18 +491,21 @@ void ColoredImage::hsl2rgb(double h,double s,double l,
 
 ColoredImage::ColoredImage(int width,int height,
            const uchar *greyLevels,const uchar *alphaLevels,
-           int saturation,int hue,int gamma)
+           int saturation,int hue,int gamma,unsigned int* icon)
 {
   m_hasAlpha = alphaLevels!=0;
   m_width    = width;
   m_height   = height;
   m_data     = (uchar*)malloc(width*height*4);
   int i;
+ bool ic=(icon!=0); 
   for (i=0;i<width*height;i++)
   {
     uchar r,g,b,a;
     double red,green,blue;
-    hsl2rgb(hue/360.0,                            // hue
+	if(!ic)
+	{   
+	hsl2rgb(hue/360.0,                            // hue
             saturation/255.0,                     // saturation
             pow(greyLevels[i]/255.0,gamma/100.0), // luma (gamma corrected)
             &red,&green,&blue);
@@ -510,12 +513,28 @@ ColoredImage::ColoredImage(int width,int height,
     g = (int)(green*255.0);
     b = (int)(blue *255.0);
     a = alphaLevels ? alphaLevels[i] : 255;
-    m_data[i*4+0]=r;
+	
+	m_data[i*4+0]=r;
     m_data[i*4+1]=g;
     m_data[i*4+2]=b;
     m_data[i*4+3]=a;
-  }
+	}
+	else
+	{
+      unsigned int val=icon[i];
+    int r1,g1,b1;
+    b1=(val & 0xff);   
+	g1=(val >>8) & 0xff;
+	r1=val>>16;
+	m_data[i*4+0]=b1;
+    m_data[i*4+1]=g1;
+    m_data[i*4+2]=r1;
+    m_data[i*4+3]=255;
+	}
+  
+  }//for
 }
+
 
 ColoredImage::~ColoredImage()
 {

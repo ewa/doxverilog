@@ -37,6 +37,7 @@
 #include "debug.h"
 #include "layout.h"
 #include "entry.h"
+#include "verilogdocgen.h"
 
 //---------------------------------------------------------------------------
 
@@ -922,7 +923,7 @@ void FileDef::insertMember(MemberDef *md)
       break;
     case MemberDef::Define:       
       addMemberToList(MemberList::decDefineMembers,md);
-      addMemberToList(MemberList::docDefineMembers,md);
+  //    addMemberToList(MemberList::docDefineMembers,md);
       break;
     default:
        err("FileDef::insertMembers(): "
@@ -1622,14 +1623,18 @@ MemberList *FileDef::getMemberList(MemberList::ListType lt) const
 void FileDef::writeMemberDeclarations(OutputList &ol,MemberList::ListType lt,const QCString &title)
 {
   static bool optVhdl = Config_getBool("OPTIMIZE_OUTPUT_VHDL");
+      static bool optVerilog = Config_getBool("OPTIMIZE_OUTPUT_VERILOG");
+
   MemberList * ml = getMemberList(lt);
   if (ml) 
   {
-    if (optVhdl) // use specific declarations function
+   if (optVhdl) // use specific declarations function
     {
-
-      VhdlDocGen::writeVhdlDeclarations(ml,ol,0,0,this,0);
-    }
+        if(optVerilog)
+       VerilogDocGen::writeVerilogDeclarations(ml,ol,0,0,this);
+         else 
+       VhdlDocGen::writeVhdlDeclarations(ml,ol,0,0,this,0);
+   }
     else
     {
       ml->writeDeclarations(ol,0,0,this,0,title,0);

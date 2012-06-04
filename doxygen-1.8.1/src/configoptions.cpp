@@ -336,6 +336,27 @@ void addConfigOptions(Config *cfg)
                  FALSE
                 );
   //----
+   //----
+    cb = cfg->addBool(
+                  "OPTIMIZE_OUTPUT_VERILOG",
+                    "Set the OPTIMIZE_OUTPUT_VERILOG tag to YES if your project consists of Verilog \n"
+                    "sources. Doxygen will then generate output that is tailored for \n"
+					"Verilog. \n",
+                    FALSE
+                 );  
+
+	
+  //----
+
+	//----
+    cb = cfg->addBool(
+                  "HIDE_PORT",
+                    "Set the HIDE_PORT tag to YES Verilog ports are not shown  \n",
+                    TRUE
+                 );  
+
+	
+  //----
   cl = cfg->addList(
                  "EXTENSION_MAPPING",
                  "Doxygen selects the parser to use depending on the extension of the files it\n"
@@ -894,7 +915,7 @@ void addConfigOptions(Config *cfg)
                  "blank the following patterns are tested:\n"
                  "*.c *.cc *.cxx *.cpp *.c++ *.d *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh\n"
                  "*.hxx *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.dox *.py\n"
-                 "*.f90 *.f *.for *.vhd *.vhdl"
+                 "*.f90 *.f *.for *.v *.vhd *.vhdl"
                 );
   cl->addValue("*.c");
   cl->addValue("*.cc");
@@ -930,6 +951,7 @@ void addConfigOptions(Config *cfg)
   cl->addValue("*.for");
   cl->addValue("*.vhd");
   cl->addValue("*.vhdl");
+   cl->addValue("*.v");
   //----
   cb = cfg->addBool(
                  "RECURSIVE",

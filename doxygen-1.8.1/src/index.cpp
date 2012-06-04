@@ -43,6 +43,7 @@
 #include "dirdef.h"
 #include "vhdldocgen.h"
 #include "layout.h"
+#include "verilogdocgen.h"
 
 #define MAX_ITEMS_BEFORE_MULTIPAGE_INDEX 200
 #define MAX_ITEMS_BEFORE_QUICK_INDEX 30
@@ -325,9 +326,12 @@ template<class T> void addMembersToIndex(T *def,LayoutDocManager::LayoutPart par
             {
               if (md->getOuterScope()==def)
               {
-                Doxygen::indexList.addContentsItem(FALSE,
-                  md->name(),md->getReference(),md->getOutputFileBase(),md->anchor(),FALSE,addToIndex);
-              }
+				  if(md->getMemberSpecifiers()!=VerilogDocGen::PORT && Config_getBool("OPTIMIZE_OUTPUT_VERILOG"))
+				  {
+					  Doxygen::indexList.addContentsItem(FALSE,
+                  md->name(),md->getReference(),md->getOutputFileBase(),md->anchor(),FALSE,addToIndex,md);
+				  }
+				  }
               else // inherited member
               {
                 Doxygen::indexList.addContentsItem(FALSE,
@@ -2156,7 +2160,11 @@ void addClassMemberNameToIndex(MemberDef *md)
   static bool hideFriendCompounds = Config_getBool("HIDE_FRIEND_COMPOUNDS");
   ClassDef *cd=0;
 
- 
+   if ( md->getLanguage()==SrcLangExt_VERILOG) // &&  (VhdlDocGen::isRecord(md) || VhdlDocGen::isUnit(md)))
+  {
+    VhdlDocGen::adjustRecordMember(md);
+  }
+
   
   if (md->isLinkableInProject() && 
       (cd=md->getClassDef())    && 

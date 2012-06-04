@@ -388,6 +388,7 @@ struct ColoredImgDataItem
   unsigned short height;
   unsigned char *content;
   unsigned char *alpha;
+   unsigned int * icon;
 };
 
 void writeColoredImgData(const char *dir,ColoredImgDataItem data[]);

@@ -746,18 +746,18 @@ static void writeImgData(const char *dir,img_data_item *data)
 
 static ColoredImgDataItem colored_tab_data[] =
 {
-  { "tab_a.png",    1, 36, tab_a_png, 0 },
-  { "tab_b.png",    1, 36, tab_b_png, 0 },
-  { "tab_h.png",    1, 36, tab_h_png, 0 },
-  { "tab_s.png",    1, 36, tab_s_png, 0 },
-  { "nav_h.png",    1, 12, header_png, 0 },
-  { "nav_f.png",    1, 56, func_header_png, 0 },
-  { "bc_s.png",     8, 32, bc_s_png, bc_s_a_png },
-  { "doxygen.png", 104,31, doxygen_png, doxygen_a_png },
-  { "closed.png",   9,  9, closed_png, closed_a_png },
-  { "open.png",     9,  9, open_png, open_a_png },
-  { "bdwn.png",     7,  8, bdwn_png, bdwn_a_png },
-  { 0, 0, 0, 0, 0 }
+  { "tab_a.png",    1, 36, tab_a_png, 0,0 },
+  { "tab_b.png",    1, 36, tab_b_png, 0 ,0},
+  { "tab_h.png",    1, 36, tab_h_png, 0 ,0},
+  { "tab_s.png",    1, 36, tab_s_png, 0 ,0},
+  { "nav_h.png",    1, 12, header_png, 0 ,0},
+  { "nav_f.png",    1, 56, func_header_png, 0,0 },
+  { "bc_s.png",     8, 32, bc_s_png, bc_s_a_png,0 },
+  { "doxygen.png", 104,31, doxygen_png, doxygen_a_png,0 },
+  { "closed.png",   9,  9, closed_png, closed_a_png ,0},
+  { "open.png",     9,  9, open_png, open_a_png,0 },
+  { "bdwn.png",     7,  8, bdwn_png, bdwn_a_png,0 },
+  { 0, 0, 0, 0, 0 ,0}
 };
 
 static img_data_item search_client_data[] =

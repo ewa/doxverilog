@@ -276,6 +276,10 @@ class VhdlDocGen
     static QCString  parseForBinding(QCString & entity,QCString & arch);
     static void addBaseClass(ClassDef* cd,ClassDef *ent);
 
+	static void writeOverview(OutputList & g_outputList);
+    static void writeOverview();
+  static void adjustRecordMember(MemberDef *mdef);
+  static void writeUCFLink(const MemberDef* mdef,OutputList &ol);
   private:
     static void findAllArchitectures(QList<QCString>& ql,const ClassDef *cd);
     static bool compareArgList(ArgumentList*,ArgumentList*);
