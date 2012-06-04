@@ -1,0 +1,124 @@
+
+
+Table of Contents
+=================
+
+* Introduction
+* System Requirements
+* Installation
+* Example for a Verilog  configuration file
+* Documentation in Verilog
+
+Introduction
+============
+ Doxverilog  is a nativ verilog parser (Verilog 2001) for Doxygen. After installing this patch you can
+ documentate your verilog project  similar to VHDL in Doxygen. 
+ Patch against the doxygen-1.7.0 version. 
+
+System Requirements
+===================
+
+  Name			version		                        URL
+  ----			---------------		                ---
+  * bison		2.1 or higher		                http://www.gnu.org/software/bison/bison.html
+  * flex		2.5.35 or higher                    http://flex.sourceforge.net
+  * doxygen sources     1.8.1(official release) 	http://www.doxygen.org/download.html
+ 	
+ 
+Installation
+============
+
+install the doxygen-1.8.1 sources(official release)
+
+1. copy the Verilog files verilogparser.y verlogscanner.l and the others source files to the doxygen-1.8.1/src directory
+
+==================  LINUX =====================================
+
+    For Linux copy the patch file linux.patch to directory doxygen-1.8.1/src
+    open a shell in the doxygen-1.8.1/src directory
+    make  patch  # patch -F3 -p0  < linux.patch
+
+   - configure doxygen
+     sh configure
+  
+   - compile  the source files
+     make all
+
+==================  WINDOWS =====================================	 
+    For WINDOWS copy the patch file windows.patch to directory doxygen-1.8.1
+    open a shell in the doxygen-1.8.1 directory
+    make  patch  # patch -F3 -p1  < windows.patch
+	
+	Open doxygen-1.8.1\winbuild\Doxygen.vcproj with Visual C++ 2008 Express Edition
+
+
+2. If the compilation was successful create a doxygen configuration file with  # doxygen -s -g verilog.cfg
+   In the configuration file you should see the option OPTIMIZE_OUTPUT_VERILOG. 
+   The file patterns for the Verilog parser  are *.v and *.V
+
+  For further information and how doxygen works see http://www.stack.nl/~dimitri/doxygen/manual.html
+
+Example for a Verilog  configuration file
+=========================================
+
+  PROJECT_NAME         = Project name
+  OUTPUT_DIRECTORY     = Project directory
+  GENERATE_HTML        = YES
+  GENERATE_LATEX       = NO
+  GENERATE_MAN         = NO
+  GENERATE_RTF         = NO
+  CASE_SENSE_NAMES     = NO
+  INPUT                =   path to your verilog files
+  FILE_PATTERNS          = *.v
+  OPTIMIZE_OUTPUT_VERILOG = YES
+  QUIET                = YES
+  INHERIT_DOCS         = YES
+  EXTRACT_ALL          = YES
+  HIDE_SCOPE_NAMES     = YES
+  SOURCE_BROWSER       = YES
+  ENABLE_PREPROCESSING   = YES
+  MACRO_EXPANSION        = no
+  SEARCH_INCLUDES        = yes
+ 
+ Documentation in Verilog
+ =========================================
+
+ Verilog comments start  with "//". 
+ Doxygen extracts comments that starts with a "//%" prefix.
+ Comments can be made before or after each item.
+ 
+ //% a one line comment
+ 
+ //% a
+ //% multi line
+ //% comment
+
+ or 
+ 
+ /*! a
+  *  multi line
+  *   comment
+  */
+
+ example for comments
+
+//% @file xor2.v
+//% @brief xor with two inputs
+
+//% Xor Module brief description
+//% Detailed description of this module 
+
+module XOR2 ( OUT, I0, I1 );
+	input I0; //% first input
+	input I1; //% second input
+	
+	//% output
+	output OUT;
+
+	assign OUT = I0 ^ I1;
+endmodule
+
+----------------------------------------------------------------------------------------------
+tested on Windows XP/ Ubuntu 11.04
+
+compiled with Microsoft Visual C++ 2008 Express Edition 8.0 and g++ 4.3 

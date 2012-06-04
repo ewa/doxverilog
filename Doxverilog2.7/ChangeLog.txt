@@ -1,0 +1,133 @@
+
+
+	
+
+Doxverilog Release 2.3
+
+
+
+- I've modified doxygen's c-preprocessor for verilog code constructs. Code fragments like
+ 
+  `ifdef xxx
+   .....
+  `elsif yyy
+   .....
+   `endif
+
+ shouldn't cause an error if xxx or yyy is defined
+
+  The only limitation is for code  like :
+
+   `endif if (i_clk_en) begin // not allowed 
+
+
+Code between macros which are not defined is 'greyed out.
+
+
+#ifdef LOW_FRQ // not defined
+ `define FRQ 10000 // coloured grey
+#endif
+
+
+
+for further information see http://www.stack.nl/~dimitri/doxygen/preprocessing.html
+
+include patch 2789 
+
+-----------------------------------------------------------------------------------------------
+
+
+Doxverilog Release 2.4
+
+
+Changes 
+ - added  Feature Request #4701
+ - Design Unit Hierarchy:  the modules are now displayed from top to bottom 
+      top_module
+           sub_module_1
+                sub_sub_module..
+   
+ - library and config constructs are now parsed and displayed
+ 
+ bug fixes
+ - doxverilog crashed when strings are longer then 1024 characters
+ 
+ 
+-----------------------------------------------------------------------------------------------
+
+
+Doxverilog Release 2.4.1
+
+fixed bug some bugs [016597] and improved the preprocessor
+
+- now `define constructs like
+
+  `define TASK task multTask()\
+      begin\
+        .....\
+        .....\
+     endtask 
+
+   are now supported
+
+note: if you make the patch under LINUX
+
+patching file winbuild/Doxygen.vcproj
+ Hunk #1 FAILED at 1.
+   ....
+ occurs
+
+ I don't know the cause of this error.However, the file is unimportant under LINUX and 
+ the compilation should be successful.  
+
+-----------------------------------------------------------------------------------------------
+
+
+Doxverilog Release 2.5
+
+-patch is now against doxygen-1.7.0
+-include patches 002987 002982 002904
+
+-----------------------------------------------------------------------------------------------
+
+Doxverilog Release 2.6
+-patch is now against doxygen-1.7.5 (official release)
+
+You can now include a constraint file  in your project (Altera .qsf or Xilinx .ucf). 
+When you include such a file, an extra button will appear.
+For including a constraint file, you must add ".qsf"  or ".ucf" in config option "FILE_PATTERNS".
+
+FILE_PATTERNS  = *.v  *.ucf (*.qsf for altera)
+ 
+A comment in a constraint file begins with ##
+ 
+#------------------------global ALTERA settings --------------------------------------------------------
+##  The projects top level entity is...
+set_global_assignment -name TOP_LEVEL_ENTITY protoype
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "11:33:21  JANUARY 01, 2011"
+                           ....
+
+
+Every peace of VERILOG code, in particular sequential statements can be documented with the following command:
+ 
+ //% @brief init values
+ //%\code init
+   initial
+    begin
+        count = 1;
+        first_rising_edge = 1;
+        clk_last_value = 0;
+    end
+ //%\endcode
+
+-------------------------------------------------------------------------------------------
+Doxverilog Release 2.7
+-patch is now against doxygen-1.8.1 (official release)
+ 
+
+-added option HIDE_PORT (default=TRUE)
+ ports are not shown in the documentation
+ 
+-fixed bug (documentation always blocks)
+
+
