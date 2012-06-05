@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <qptrdict.h>
+#include <assert.h>
 
 #include "version.h"
 #include "doxygen.h"
@@ -4126,6 +4127,7 @@ static void findBaseClassesForClass(
   {
     //printf("masterCd=%s bi->name='%s' #actualArgs=%d\n",
     //    masterCd->localName().data(),bi->name.data(),actualArgs?(int)actualArgs->count():-1);
+    assert(bi->name != NULL);
     bool delTempNames=FALSE;
     if (templateNames==0)
     {
@@ -4367,6 +4369,7 @@ static bool findClassRelation(
   Entry *root = rootNav->entry();
 
   QCString biName=bi->name;
+  assert(biName != NULL);
   bool explicitGlobalScope=FALSE;
   //printf("findClassRelation: biName=`%s'\n",biName.data());
   if (biName.left(2)=="::") // explicit global scope

@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "verilogdocgen.h"
 #include "membergroup.h"
 //#include "verilogparser.hpp"
@@ -952,26 +953,27 @@ named_parameter_assignment : DOT_TOK identifier LBRACE_TOK  expression  RBRACE_T
 
 
 module_instance : identifier11  LBRACE_TOK  list_of_port_connections  RBRACE_TOK {vbufreset(); currVerilogType=0;} 
-             	 | identifier11  LBRACE_TOK error  RBRACE_TOK {vbufreset(); currVerilogType=0;}  
-				 | identifier11 LBRACE_TOK   RBRACE_TOK                        {vbufreset(); currVerilogType=0;} 
-				 ;
+| identifier11  LBRACE_TOK error  RBRACE_TOK {vbufreset(); currVerilogType=0;}  
+| identifier11 LBRACE_TOK   RBRACE_TOK                        {vbufreset(); currVerilogType=0;} 
+;
 
 identifier11:identifier xrange { 
-                            QCString secName($<cstr>0);
-							QCString firstName($<cstr>1);;
-							 if(moduleParamName.isEmpty()){
-							   moduleParamName=secName;
-							  moduleLine=c_lloc.last_line;
-							   }
-							 parseModuleInst(firstName,moduleParamName);
-							 moduleParamName.resize(0);
-							     if(parseCode){
-							  currVerilogType=VerilogDocGen::COMPONENT;
-							  vbufreset();
-							  }
-							  }
-            // | identifier range;        
-            ;
+  QCString secName($<cstr>0);
+  QCString firstName($<cstr>1);;
+  //fprintf(stderr, "identifier11: identifier '%s' xrange '%s'\n", $<cstr>1, $<cstr>0);
+  if(moduleParamName.isEmpty()){
+    moduleParamName=secName;
+    moduleLine=c_lloc.last_line;
+  }
+  parseModuleInst(firstName,moduleParamName);
+  moduleParamName.resize(0);
+  if(parseCode){
+    currVerilogType=VerilogDocGen::COMPONENT;
+    vbufreset();
+  }
+}
+// | identifier range;        
+;
 
 				 
 list_of_port_connections : ordered_port_connection_list 
@@ -2067,57 +2069,58 @@ void parseModule(){
 
 // extracts module instances [ module_name name,module_name #(...) name]
 
-void parseModuleInst(QCString& first, QCString& sec) {
+ void parseModuleInst(QCString& first, QCString& sec) {
  
-if(currVerilogType==VerilogDocGen::DEFPARAM ) return; //|| generateItem 
+   if(currVerilogType==VerilogDocGen::DEFPARAM ) return; //|| generateItem 
 
 
 
- VhdlDocGen::deleteAllChars(sec,'(');
- VhdlDocGen::deleteAllChars(sec,'\n');
- VhdlDocGen::deleteAllChars(sec,')');
- VhdlDocGen::deleteAllChars(sec,' ');
- VhdlDocGen::deleteAllChars(sec,',');
- VhdlDocGen::deleteAllChars(sec,';');
- QCString temp=sec;
-//while(sec.stripPrefix(" "));
+   VhdlDocGen::deleteAllChars(sec,'(');
+   VhdlDocGen::deleteAllChars(sec,'\n');
+   VhdlDocGen::deleteAllChars(sec,')');
+   VhdlDocGen::deleteAllChars(sec,' ');
+   VhdlDocGen::deleteAllChars(sec,',');
+   VhdlDocGen::deleteAllChars(sec,';');
+   QCString temp=sec;
+   //while(sec.stripPrefix(" "));
 
-if(sec!=first && (sec.contains("#")==0))
-{ 
- //QStringList ql=QStringList::split(first.data(),sec,false);
-int oo=sec.findRev(first.data());
-if(oo>0) 
- sec=sec.left(oo);
-}
-else
- sec=getLastLetter();
+   if(sec!=first && (sec.contains("#")==0))
+     { 
+       //QStringList ql=QStringList::split(first.data(),sec,false);
+       int oo=sec.findRev(first.data());
+       if(oo>0) 
+	 sec=sec.left(oo);
+     }
+   else
+     sec=getLastLetter();
 
-if(temp.contains("#"))
-{ 
- int ii=temp.find("#");
- sec=temp.left(ii);
-while(sec.stripPrefix(" "));
-}
+   if(temp.contains("#"))
+     { 
+       int ii=temp.find("#");
+       sec=temp.left(ii);
+       while(sec.stripPrefix(" "));
+     }
 
 
- if(parseCode){
+   if(parseCode){
      VhdlDocGen::deleteAllChars(sec,'\t');
-   currVerilogInst=sec;
-   return;
-  }
- else {
-  Entry* pTemp=VerilogDocGen::makeNewEntry(sec.data(),Entry::VARIABLE_SEC,VerilogDocGen::COMPONENT,moduleLine);
-  pTemp->type=first;
- if(generateItem) 
-  pTemp->args="[generate]";
- if(sec==first)return;
-if(currentVerilog)
- if(!findExtendsComponent(currentVerilog->extends,sec)){	
-  	BaseInfo *bb=new BaseInfo(sec,Private,Normal);
-    currentVerilog->extends->append(bb);						
+     currVerilogInst=sec;
+     return;
    }
-  }
-}
+   else {
+     Entry* pTemp=VerilogDocGen::makeNewEntry(sec.data(),Entry::VARIABLE_SEC,VerilogDocGen::COMPONENT,moduleLine);
+     pTemp->type=first;
+     if(generateItem) 
+       pTemp->args="[generate]";
+     if(sec==first)return;
+     if(currentVerilog)
+       if(!findExtendsComponent(currentVerilog->extends,sec)){	
+	 BaseInfo *bb=new BaseInfo(sec,Private,Normal);
+	 assert(bb->name != NULL);
+	 currentVerilog->extends->append(bb);
+       }
+   }
+ }
 
 
 void parseListOfPorts() {
