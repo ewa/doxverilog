@@ -66,6 +66,9 @@ sub GenerateDep {
 #$ GenerateDep("vhdlcode.cpp","vhdlcode.l");
 	$(LEX) -i -PvhdlcodeYY -t vhdlcode.l | $(INCBUFSIZE) >vhdlcode.cpp
 
+#$ GenerateDep("verilogcode.cpp","verilogcode.l");
+	$(LEX) -i -PverilogcodeYY -t verilogcode.l | $(INCBUFSIZE) >verilogcode.cpp
+
 #$ GenerateDep("tclscanner.cpp","tclscanner.l");
 	$(LEX) -i -PtclscanYY -t tclscanner.l | $(INCBUFSIZE) >tclscanner.cpp
 
@@ -106,6 +109,14 @@ sub GenerateDep {
 #$ GenerateDep("vhdlparser.h","vhdlparser.y");
 	$(YACC) -l -d -p vhdlScanYY vhdlparser.y -o vhdlparser.c 
 	-rm vhdlparser.c	
+
+
+#$ GenerateDep("verilogparser.cpp","verilogparser.y");
+	$(YACC) -l -p verilogScanYY verilogparser.y -o verilogparser.cpp 	
+
+#$ GenerateDep("verilogparser.h","verilogparser.y");
+	$(YACC) -l -d -p verilogScanYY verilogparser.y -o verilogparser.c 
+	-rm verilogparser.c	
 	
 #$ GenerateDep("layout.cpp","layout_default.h");
 
