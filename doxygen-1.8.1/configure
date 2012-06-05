@@ -414,14 +414,20 @@ echo "using $f_perl";
 
 echo -n "  Checking for flex... "
 if test "$f_flex" = NO; then
-  flex_dirs="$bin_dirs /usr/bin /usr/local/bin /bin"
+  flex_dirs="$bin_dirs /usr/bin /bin /usr/local/bin"
   flex_prog=NO
   flex_found=NO
   for j in $flex_dirs; do
     if test -x "$j/flex"; then
-      flex_found=YES
-      flex_prog="$j/flex"
-      break
+	$j/flex --help | grep -e '--header-file' > /dev/null
+	if test $? -eq 0; then
+	    #echo "$j/flex supports --header-file"
+	    flex_found=YES
+	    flex_prog="$j/flex"
+	    break
+# 	else
+# 	    echo "$j/flex found but does not support --header-file. Looking for more"
+ 	fi
     fi
   done
   f_flex="$flex_prog" 
