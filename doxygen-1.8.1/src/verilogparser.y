@@ -2091,8 +2091,9 @@ void parseModule(){
        if(oo>0) 
 	 sec=sec.left(oo);
      }
-   else
-     sec=getLastLetter();
+   /* XXX this seems to be the source of my misery, but what's it for? -EWA */
+   /* else */
+   /*   sec=getLastLetter(); */
 
    if(temp.contains("#"))
      { 
