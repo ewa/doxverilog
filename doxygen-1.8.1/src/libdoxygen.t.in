@@ -111,16 +111,16 @@ sub GenerateDep {
 	-rm vhdlparser.c	
 
 #$ GenerateDep("verilogscanner.cpp","verilogscanner.l","verilogparser.hpp");
-	$(LEX) -i -PverilogScanYY -t verilogscanner.l | $(INCBUFSIZE) >verilogscanner.cpp
+	$(LEX) -8 -PverilogScanYY -t verilogscanner.l | $(INCBUFSIZE) >verilogscanner.cpp
 
 #$ GenerateDep("verilogparser.cpp","verilogparser.y");
-	$(YACC) -l -d -p verilogScanYY verilogparser.y -o verilogparser.cpp
+	$(YACC) -d -p verilogScanYY verilogparser.y -o verilogparser.cpp
 
 #$ GenerateDep("verilogparser.hpp","verilogparser.y");
-	$(YACC) -l -d -p verilogScanYY verilogparser.y -o verilogparser.c 
+	$(YACC) -l -d -p verilogScanYY verilogparser.y -o verilogparser.c
 	-rm verilogparser.c
 	-mv verilogparser.h verilogparser.hpp
-	
+
 #$ GenerateDep("layout.cpp","layout_default.h");
 
 TO_C_CMD=sed -e "s/\\\\/\\\\\\\\/g" -e "s/\"/\\\\\"/g" -e "s/^/\"/g" -e "s/$$/\\\\n\"/g"
